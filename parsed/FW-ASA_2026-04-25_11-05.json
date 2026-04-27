@@ -1,0 +1,293 @@
+{
+    "metadata": {
+        "source_file": "data/brut/FW-ASA_2026-04-25_10-28.txt",
+        "device": "FW-ASA"
+    },
+    "show running-config": ": Saved\n\n: \n: Serial Number: 9AQPEJ5QDAD\n: Hardware:   ASAv, 2048 MB RAM, CPU Unknown Model 2304 MHz\n:\nASA Version 9.9(2) \n!\nhostname FW-ASA\nenable password $sha512$5000$Y7NbifyXK0I+uDpUyDrIEA==$CilQkZbGXdiTa/j/Qxuc+A== pbkdf2\nnames\n\n!\ninterface GigabitEthernet0/0\n nameif inside\n security-level 100\n ip address 10.0.0.5 255.255.255.252 \n!\ninterface GigabitEthernet0/1\n nameif outside\n security-level 0\n ip address 10.0.0.2 255.255.255.252 \n!\ninterface GigabitEthernet0/2\n nameif dmz\n security-level 50\n ip address 172.16.2.1 255.255.255.240 \n!\ninterface GigabitEthernet0/3\n shutdown\n no nameif\n no security-level\n no ip address\n!\ninterface GigabitEthernet0/4\n shutdown\n no nameif\n no security-level\n no ip address\n!\ninterface GigabitEthernet0/5\n shutdown\n no nameif\n no security-level\n no ip address\n!\ninterface GigabitEthernet0/6\n shutdown\n no nameif\n no security-level\n no ip address\n!\ninterface Management0/0\n shutdown\n no nameif\n no security-level\n no ip address\n!\nftp mode passive\nobject network INTERNAL-NET\n subnet 192.168.1.0 255.255.255.0\nobject network OBJ-DMZ-NETWORK\n subnet 172.16.2.0 255.255.255.240\nobject network OBJ-SERVER-WEB\n host 172.16.2.2\naccess-list OUTSIDE-IN extended permit icmp any any unreachable \naccess-list OUTSIDE-IN extended permit icmp any any time-exceeded \naccess-list OUTSIDE-IN extended permit icmp any any echo-reply \naccess-list OUTSIDE-IN extended permit icmp any object OBJ-SERVER-WEB echo \naccess-list OUTSIDE-TO-DMZ extended permit tcp any object OBJ-SERVER-WEB eq www \npager lines 23\nmtu inside 1500\nmtu outside 1500\nmtu dmz 1500\nno failover\nno monitor-interface service-module \nicmp unreachable rate-limit 1 burst-size 1\nicmp permit any dmz\nno asdm history enable\narp timeout 14400\nno arp permit-nonconnected\narp rate-limit 8192\nnat (inside,dmz) source static any any destination static OBJ-DMZ-NETWORK OBJ-DMZ-NETWORK\nnat (dmz,outside) source static OBJ-SERVER-WEB OBJ-SERVER-WEB\n!\nobject network INTERNAL-NET\n nat (inside,outside) dynamic interface\nobject network OBJ-SERVER-WEB\n nat (dmz,outside) static interface service tcp www www \naccess-group OUTSIDE-IN in interface outside\nroute outside 0.0.0.0 0.0.0.0 10.0.0.1 1\nroute inside 192.168.1.0 255.255.255.0 10.0.0.6 1\nroute outside 192.168.254.0 255.255.255.0 10.0.0.1 1\ntimeout xlate 3:00:00\ntimeout pat-xlate 0:00:30\ntimeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 sctp 0:02:00 icmp 0:00:02\ntimeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00\ntimeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00\ntimeout sip-provisional-media 0:02:00 uauth 0:05:00 absolute\ntimeout tcp-proxy-reassembly 0:01:00\ntimeout floating-conn 0:00:00\ntimeout conn-holddown 0:00:15\ntimeout igp stale-route 0:01:10\nuser-identity default-domain LOCAL\naaa authentication ssh console LOCAL \naaa authentication login-history\nno snmp-server location\nno snmp-server contact\ncrypto ipsec security-association pmtu-aging infinite\ncrypto ca trustpoint _SmartCallHome_ServerCA\n no validation-usage\n crl configure\ncrypto ca trustpool policy\n auto-import\ntelnet timeout 5\nssh stricthostkeycheck\nssh 192.168.1.0 255.255.255.0 inside\nssh 192.168.254.0 255.255.255.0 outside\nssh timeout 3\nssh version 2\nssh key-exchange group dh-group1-sha1\nconsole timeout 0\nthreat-detection basic-threat\nthreat-detection statistics access-list\nno threat-detection statistics tcp-intercept\ndynamic-access-policy-record DfltAccessPolicy\nusername cisco password $sha512$5000$+5WT86Psvqsb8dE97RXrQA==$eVwVp2OvdilOx3hobOXTIA== pbkdf2\n!\nclass-map inspection-default\n match default-inspection-traffic\nclass-map inspection_default\n match default-inspection-traffic\n!\n!\npolicy-map type inspect dns preset_dns_map\n parameters\n  message-length maximum client auto\n  message-length maximum 512\n  no tcp-inspection\npolicy-map global-policy\n class inspection-default\n  inspect icmp \npolicy-map global_policy\n class inspection_default\n  inspect ip-options \n  inspect netbios \n  inspect rtsp \n  inspect sunrpc \n  inspect tftp \n  inspect xdmcp \n  inspect dns preset_dns_map \n  inspect ftp \n  inspect h323 h225 \n  inspect h323 ras \n  inspect rsh \n  inspect esmtp \n  inspect sqlnet \n  inspect sip  \n  inspect skinny  \npolicy-map type inspect dns migrated_dns_map_2\n parameters\n  message-length maximum client auto\n  message-length maximum 512\n  no tcp-inspection\npolicy-map type inspect dns migrated_dns_map_1\n parameters\n  message-length maximum client auto\n  message-length maximum 512\n  no tcp-inspection\n!\nservice-policy global_policy global\nprompt hostname context \nno call-home reporting anonymous\ncall-home\n profile CiscoTAC-1\n  no active\n  destination address http https://tools.cisco.com/its/service/oddce/services/DDCEService\n  destination address email callhome@cisco.com\n  destination transport-method http\n  subscribe-to-alert-group diagnostic\n  subscribe-to-alert-group environment\n  subscribe-to-alert-group inventory periodic monthly\n  subscribe-to-alert-group configuration periodic monthly\n  subscribe-to-alert-group telemetry periodic daily\n profile License\n  destination address http https://tools.cisco.com/its/service/oddce/services/DDCEService\n  destination transport-method http\nCryptochecksum:721f553f0c665ddcf5da81af9a814bdb\n: end",
+    "show interface": "Interface GigabitEthernet0/0 \"inside\", is up, line protocol is up\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)\n\tInput flow control is unsupported, output flow control is off\n\tMAC address 0c89.087d.0001, MTU 1500\n\tIP address 10.0.0.5, subnet mask 255.255.255.252\n\t305 packets input, 26436 bytes, 0 no buffer\n\tReceived 5 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t557 packets output, 84056 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (509/459)\n\toutput queue (blocks free curr/low): hardware (511/507)\n  Traffic Statistics for \"inside\":\n\t305 packets input, 19440 bytes\n\t557 packets output, 73858 bytes\n\t0 packets dropped\n      1 minute input rate 0 pkts/sec,  0 bytes/sec\n      1 minute output rate 0 pkts/sec,  0 bytes/sec\n      1 minute drop rate, 0 pkts/sec\n      5 minute input rate 0 pkts/sec,  0 bytes/sec\n      5 minute output rate 0 pkts/sec,  0 bytes/sec\n      5 minute drop rate, 0 pkts/sec\nInterface GigabitEthernet0/1 \"outside\", is up, line protocol is up\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)\n\tInput flow control is unsupported, output flow control is off\n\tMAC address 0c89.087d.0002, MTU 1500\n\tIP address 10.0.0.2, subnet mask 255.255.255.252\n\t272 packets input, 48085 bytes, 0 no buffer\n\tReceived 5 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t224 packets output, 18421 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (489/461)\n\toutput queue (blocks free curr/low): hardware (511/509)\n  Traffic Statistics for \"outside\":\n\t272 packets input, 43145 bytes\n\t224 packets output, 13219 bytes\n\t0 packets dropped\n      1 minute input rate 0 pkts/sec,  0 bytes/sec\n      1 minute output rate 0 pkts/sec,  0 bytes/sec\n      1 minute drop rate, 0 pkts/sec\n      5 minute input rate 0 pkts/sec,  0 bytes/sec\n      5 minute output rate 0 pkts/sec,  0 bytes/sec\n      5 minute drop rate, 0 pkts/sec\nInterface GigabitEthernet0/2 \"dmz\", is up, line protocol is up\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)\n\tInput flow control is unsupported, output flow control is off\n\tMAC address 0c89.087d.0003, MTU 1500\n\tIP address 172.16.2.1, subnet mask 255.255.255.240\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t1 packets output, 64 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/510)\n  Traffic Statistics for \"dmz\":\n\t0 packets input, 0 bytes\n\t1 packets output, 28 bytes\n\t0 packets dropped\n      1 minute input rate 0 pkts/sec,  0 bytes/sec\n      1 minute output rate 0 pkts/sec,  0 bytes/sec\n      1 minute drop rate, 0 pkts/sec\n      5 minute input rate 0 pkts/sec,  0 bytes/sec\n      5 minute output rate 0 pkts/sec,  0 bytes/sec\n      5 minute drop rate, 0 pkts/sec\nInterface GigabitEthernet0/3 \"\", is administratively down, line protocol is down\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex, Auto-Speed\n\tInput flow control is unsupported, output flow control is off\n\tAvailable but not configured via nameif\n\tMAC address 0c89.087d.0004, MTU not set\n\tIP address unassigned\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t0 packets output, 0 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/511)\nInterface GigabitEthernet0/4 \"\", is administratively down, line protocol is down\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex, Auto-Speed\n\tInput flow control is unsupported, output flow control is off\n\tAvailable but not configured via nameif\n\tMAC address 0c89.087d.0005, MTU not set\n\tIP address unassigned\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t0 packets output, 0 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/511)\nInterface GigabitEthernet0/5 \"\", is administratively down, line protocol is down\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex, Auto-Speed\n\tInput flow control is unsupported, output flow control is off\n\tAvailable but not configured via nameif\n\tMAC address 0c89.087d.0006, MTU not set\n\tIP address unassigned\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t0 packets output, 0 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/511)\nInterface GigabitEthernet0/6 \"\", is administratively down, line protocol is down\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex, Auto-Speed\n\tInput flow control is unsupported, output flow control is off\n\tAvailable but not configured via nameif\n\tMAC address 0c89.087d.0007, MTU not set\n\tIP address unassigned\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t0 packets output, 0 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/511)\nInterface Management0/0 \"\", is administratively down, line protocol is down\n  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec\n\tAuto-Duplex, Auto-Speed\n\tInput flow control is unsupported, output flow control is off\n\tAvailable but not configured via nameif\n\tMAC address 0c89.087d.0000, MTU not set\n\tIP address unassigned\n\t0 packets input, 0 bytes, 0 no buffer\n\tReceived 0 broadcasts, 0 runts, 0 giants\n\t0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n\t0 pause input, 0 resume input\n\t0 L2 decode drops\n\t0 packets output, 0 bytes, 0 underruns\n\t0 pause output, 0 resume output\n\t0 output errors, 0 collisions, 1 interface resets\n\t0 late collisions, 0 deferred\n\t0 input reset drops, 0 output reset drops\n\tinput queue (blocks free curr/low): hardware (511/511)\n\toutput queue (blocks free curr/low): hardware (511/511)",
+    "show version": {
+        "version": {
+            "asa_version": "9.9(2)",
+            "firepower_version": "2.3(1.84)",
+            "asdm_version": "7.9(2)",
+            "compiled_date": "Sun 25-Mar-18 17:32 PDT",
+            "compiled_by": "builders",
+            "system_image": "boot:/asa992-smp-k8.bin",
+            "boot_config_file": "startup-config",
+            "hostname": "FW-ASA",
+            "uptime": "12 mins 41 secs",
+            "platform": "ASAv",
+            "mem_size": "2048 MB",
+            "processor_type": "Unknown Model 2304 MHz",
+            "asa_model": "ASAv10",
+            "disks": {
+                "Internal": {
+                    "disk_size": "8192MB",
+                    "type_of_disk": "ATA Compact Flash"
+                },
+                "Slot 1": {
+                    "disk_size": "8192MB",
+                    "type_of_disk": "ATA Compact Flash"
+                }
+            },
+            "bios_flash": "Firmware Hub @ 0x0, 0KB",
+            "interfaces": {
+                "0": {
+                    "interface": "Management0/0",
+                    "mac_addr": "0c89.087d.0000",
+                    "intf_irq": 11
+                },
+                "1": {
+                    "interface": "GigabitEthernet0/0",
+                    "mac_addr": "0c89.087d.0001",
+                    "intf_irq": 11
+                },
+                "2": {
+                    "interface": "GigabitEthernet0/1",
+                    "mac_addr": "0c89.087d.0002",
+                    "intf_irq": 10
+                },
+                "3": {
+                    "interface": "GigabitEthernet0/2",
+                    "mac_addr": "0c89.087d.0003",
+                    "intf_irq": 10
+                },
+                "4": {
+                    "interface": "GigabitEthernet0/3",
+                    "mac_addr": "0c89.087d.0004",
+                    "intf_irq": 11
+                },
+                "5": {
+                    "interface": "GigabitEthernet0/4",
+                    "mac_addr": "0c89.087d.0005",
+                    "intf_irq": 11
+                },
+                "6": {
+                    "interface": "GigabitEthernet0/5",
+                    "mac_addr": "0c89.087d.0006",
+                    "intf_irq": 10
+                },
+                "7": {
+                    "interface": "GigabitEthernet0/6",
+                    "mac_addr": "0c89.087d.0007",
+                    "intf_irq": 10
+                }
+            },
+            "license_mode": "Smart Licensing",
+            "license_state": "Unlicensed",
+            "entitlement": "no feature tier and no throughput level configured",
+            "mem_allocation": "*Memory resource allocation is more than the permitted limit.",
+            "licensed_features": {
+                "max_vlans": {
+                    "status": "50"
+                },
+                "inside_hosts": {
+                    "status": "Unlimited"
+                },
+                "failover": {
+                    "status": "Active/Standby"
+                },
+                "crypto_des": {
+                    "status": "Enabled"
+                },
+                "crypto_3des_aes": {
+                    "status": "Enabled"
+                },
+                "security_contexts": {
+                    "status": "0"
+                },
+                "carrier": {
+                    "status": "Disabled"
+                },
+                "anyconnect_premium_peers": {
+                    "status": "2"
+                },
+                "anyconnect_essentials": {
+                    "status": "Disabled"
+                },
+                "other_vpn_peers": {
+                    "status": "250"
+                },
+                "total_vpn_peers": {
+                    "status": "250"
+                },
+                "anyconnect_for_mobile": {
+                    "status": "Disabled"
+                },
+                "anyconnect_for_cisco_vpn_phone": {
+                    "status": "Disabled"
+                },
+                "advanced_endpoint_assessment": {
+                    "status": "Disabled"
+                },
+                "shared_license": {
+                    "status": "Disabled"
+                },
+                "total_tls_proxy_sessions": {
+                    "status": "2"
+                },
+                "botnet_traffic_filter": {
+                    "status": "Enabled"
+                },
+                "cluster": {
+                    "status": "Disabled"
+                }
+            },
+            "serial_number": "9AQPEJ5QDAD",
+            "image_type": "Release",
+            "key_version": "A",
+            "last_modified_by": "",
+            "last_modified_date": "Configuration has not been modified since last system restart."
+        }
+    },
+    "show route": {
+        "vrf": {
+            "default": {
+                "address_family": {
+                    "ipv4": {
+                        "routes": {
+                            "0.0.0.0/0": {
+                                "candidate_default": true,
+                                "active": true,
+                                "route": "0.0.0.0/0",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.1",
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.0/30": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.0/30",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "outside": {
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.2/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.2/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "outside": {
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.4/30": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.4/30",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "inside": {
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.5/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.5/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "inside": {
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "172.16.2.0/28": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "172.16.2.0/28",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "dmz": {
+                                            "outgoing_interface_name": "dmz"
+                                        }
+                                    }
+                                }
+                            },
+                            "172.16.2.1/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "172.16.2.1/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "dmz": {
+                                            "outgoing_interface_name": "dmz"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.1.0/24": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "192.168.1.0/24",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.6",
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.254.0/24": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "192.168.254.0/24",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.1",
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

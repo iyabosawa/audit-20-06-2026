@@ -1,0 +1,463 @@
+--- BACKUP FW-ASA - 2026-04-25_10-28 ---
+
+==============================
+COMMAND: show running-config
+==============================
+: Saved
+
+: 
+: Serial Number: 9AQPEJ5QDAD
+: Hardware:   ASAv, 2048 MB RAM, CPU Unknown Model 2304 MHz
+:
+ASA Version 9.9(2) 
+!
+hostname FW-ASA
+enable password $sha512$5000$Y7NbifyXK0I+uDpUyDrIEA==$CilQkZbGXdiTa/j/Qxuc+A== pbkdf2
+names
+
+!
+interface GigabitEthernet0/0
+ nameif inside
+ security-level 100
+ ip address 10.0.0.5 255.255.255.252 
+!
+interface GigabitEthernet0/1
+ nameif outside
+ security-level 0
+ ip address 10.0.0.2 255.255.255.252 
+!
+interface GigabitEthernet0/2
+ nameif dmz
+ security-level 50
+ ip address 172.16.2.1 255.255.255.240 
+!
+interface GigabitEthernet0/3
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/4
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/5
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface GigabitEthernet0/6
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+interface Management0/0
+ shutdown
+ no nameif
+ no security-level
+ no ip address
+!
+ftp mode passive
+object network INTERNAL-NET
+ subnet 192.168.1.0 255.255.255.0
+object network OBJ-DMZ-NETWORK
+ subnet 172.16.2.0 255.255.255.240
+object network OBJ-SERVER-WEB
+ host 172.16.2.2
+access-list OUTSIDE-IN extended permit icmp any any unreachable 
+access-list OUTSIDE-IN extended permit icmp any any time-exceeded 
+access-list OUTSIDE-IN extended permit icmp any any echo-reply 
+access-list OUTSIDE-IN extended permit icmp any object OBJ-SERVER-WEB echo 
+access-list OUTSIDE-TO-DMZ extended permit tcp any object OBJ-SERVER-WEB eq www 
+pager lines 23
+mtu inside 1500
+mtu outside 1500
+mtu dmz 1500
+no failover
+no monitor-interface service-module 
+icmp unreachable rate-limit 1 burst-size 1
+icmp permit any dmz
+no asdm history enable
+arp timeout 14400
+no arp permit-nonconnected
+arp rate-limit 8192
+nat (inside,dmz) source static any any destination static OBJ-DMZ-NETWORK OBJ-DMZ-NETWORK
+nat (dmz,outside) source static OBJ-SERVER-WEB OBJ-SERVER-WEB
+!
+object network INTERNAL-NET
+ nat (inside,outside) dynamic interface
+object network OBJ-SERVER-WEB
+ nat (dmz,outside) static interface service tcp www www 
+access-group OUTSIDE-IN in interface outside
+route outside 0.0.0.0 0.0.0.0 10.0.0.1 1
+route inside 192.168.1.0 255.255.255.0 10.0.0.6 1
+route outside 192.168.254.0 255.255.255.0 10.0.0.1 1
+timeout xlate 3:00:00
+timeout pat-xlate 0:00:30
+timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 sctp 0:02:00 icmp 0:00:02
+timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00
+timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00
+timeout sip-provisional-media 0:02:00 uauth 0:05:00 absolute
+timeout tcp-proxy-reassembly 0:01:00
+timeout floating-conn 0:00:00
+timeout conn-holddown 0:00:15
+timeout igp stale-route 0:01:10
+user-identity default-domain LOCAL
+aaa authentication ssh console LOCAL 
+aaa authentication login-history
+no snmp-server location
+no snmp-server contact
+crypto ipsec security-association pmtu-aging infinite
+crypto ca trustpoint _SmartCallHome_ServerCA
+ no validation-usage
+ crl configure
+crypto ca trustpool policy
+ auto-import
+telnet timeout 5
+ssh stricthostkeycheck
+ssh 192.168.1.0 255.255.255.0 inside
+ssh 192.168.254.0 255.255.255.0 outside
+ssh timeout 3
+ssh version 2
+ssh key-exchange group dh-group1-sha1
+console timeout 0
+threat-detection basic-threat
+threat-detection statistics access-list
+no threat-detection statistics tcp-intercept
+dynamic-access-policy-record DfltAccessPolicy
+username cisco password $sha512$5000$+5WT86Psvqsb8dE97RXrQA==$eVwVp2OvdilOx3hobOXTIA== pbkdf2
+!
+class-map inspection-default
+ match default-inspection-traffic
+class-map inspection_default
+ match default-inspection-traffic
+!
+!
+policy-map type inspect dns preset_dns_map
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+policy-map global-policy
+ class inspection-default
+  inspect icmp 
+policy-map global_policy
+ class inspection_default
+  inspect ip-options 
+  inspect netbios 
+  inspect rtsp 
+  inspect sunrpc 
+  inspect tftp 
+  inspect xdmcp 
+  inspect dns preset_dns_map 
+  inspect ftp 
+  inspect h323 h225 
+  inspect h323 ras 
+  inspect rsh 
+  inspect esmtp 
+  inspect sqlnet 
+  inspect sip  
+  inspect skinny  
+policy-map type inspect dns migrated_dns_map_2
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+policy-map type inspect dns migrated_dns_map_1
+ parameters
+  message-length maximum client auto
+  message-length maximum 512
+  no tcp-inspection
+!
+service-policy global_policy global
+prompt hostname context 
+no call-home reporting anonymous
+call-home
+ profile CiscoTAC-1
+  no active
+  destination address http https://tools.cisco.com/its/service/oddce/services/DDCEService
+  destination address email callhome@cisco.com
+  destination transport-method http
+  subscribe-to-alert-group diagnostic
+  subscribe-to-alert-group environment
+  subscribe-to-alert-group inventory periodic monthly
+  subscribe-to-alert-group configuration periodic monthly
+  subscribe-to-alert-group telemetry periodic daily
+ profile License
+  destination address http https://tools.cisco.com/its/service/oddce/services/DDCEService
+  destination transport-method http
+Cryptochecksum:721f553f0c665ddcf5da81af9a814bdb
+: end
+
+==============================
+COMMAND: show interface
+==============================
+Interface GigabitEthernet0/0 "inside", is up, line protocol is up
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)
+	Input flow control is unsupported, output flow control is off
+	MAC address 0c89.087d.0001, MTU 1500
+	IP address 10.0.0.5, subnet mask 255.255.255.252
+	305 packets input, 26436 bytes, 0 no buffer
+	Received 5 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	557 packets output, 84056 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (509/459)
+	output queue (blocks free curr/low): hardware (511/507)
+  Traffic Statistics for "inside":
+	305 packets input, 19440 bytes
+	557 packets output, 73858 bytes
+	0 packets dropped
+      1 minute input rate 0 pkts/sec,  0 bytes/sec
+      1 minute output rate 0 pkts/sec,  0 bytes/sec
+      1 minute drop rate, 0 pkts/sec
+      5 minute input rate 0 pkts/sec,  0 bytes/sec
+      5 minute output rate 0 pkts/sec,  0 bytes/sec
+      5 minute drop rate, 0 pkts/sec
+Interface GigabitEthernet0/1 "outside", is up, line protocol is up
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)
+	Input flow control is unsupported, output flow control is off
+	MAC address 0c89.087d.0002, MTU 1500
+	IP address 10.0.0.2, subnet mask 255.255.255.252
+	272 packets input, 48085 bytes, 0 no buffer
+	Received 5 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	224 packets output, 18421 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (489/461)
+	output queue (blocks free curr/low): hardware (511/509)
+  Traffic Statistics for "outside":
+	272 packets input, 43145 bytes
+	224 packets output, 13219 bytes
+	0 packets dropped
+      1 minute input rate 0 pkts/sec,  0 bytes/sec
+      1 minute output rate 0 pkts/sec,  0 bytes/sec
+      1 minute drop rate, 0 pkts/sec
+      5 minute input rate 0 pkts/sec,  0 bytes/sec
+      5 minute output rate 0 pkts/sec,  0 bytes/sec
+      5 minute drop rate, 0 pkts/sec
+Interface GigabitEthernet0/2 "dmz", is up, line protocol is up
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex(Full-duplex), Auto-Speed(1000 Mbps)
+	Input flow control is unsupported, output flow control is off
+	MAC address 0c89.087d.0003, MTU 1500
+	IP address 172.16.2.1, subnet mask 255.255.255.240
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	1 packets output, 64 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/510)
+  Traffic Statistics for "dmz":
+	0 packets input, 0 bytes
+	1 packets output, 28 bytes
+	0 packets dropped
+      1 minute input rate 0 pkts/sec,  0 bytes/sec
+      1 minute output rate 0 pkts/sec,  0 bytes/sec
+      1 minute drop rate, 0 pkts/sec
+      5 minute input rate 0 pkts/sec,  0 bytes/sec
+      5 minute output rate 0 pkts/sec,  0 bytes/sec
+      5 minute drop rate, 0 pkts/sec
+Interface GigabitEthernet0/3 "", is administratively down, line protocol is down
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex, Auto-Speed
+	Input flow control is unsupported, output flow control is off
+	Available but not configured via nameif
+	MAC address 0c89.087d.0004, MTU not set
+	IP address unassigned
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	0 packets output, 0 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/511)
+Interface GigabitEthernet0/4 "", is administratively down, line protocol is down
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex, Auto-Speed
+	Input flow control is unsupported, output flow control is off
+	Available but not configured via nameif
+	MAC address 0c89.087d.0005, MTU not set
+	IP address unassigned
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	0 packets output, 0 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/511)
+Interface GigabitEthernet0/5 "", is administratively down, line protocol is down
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex, Auto-Speed
+	Input flow control is unsupported, output flow control is off
+	Available but not configured via nameif
+	MAC address 0c89.087d.0006, MTU not set
+	IP address unassigned
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	0 packets output, 0 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/511)
+Interface GigabitEthernet0/6 "", is administratively down, line protocol is down
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex, Auto-Speed
+	Input flow control is unsupported, output flow control is off
+	Available but not configured via nameif
+	MAC address 0c89.087d.0007, MTU not set
+	IP address unassigned
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	0 packets output, 0 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/511)
+Interface Management0/0 "", is administratively down, line protocol is down
+  Hardware is i82540EM rev03, BW 1000 Mbps, DLY 10 usec
+	Auto-Duplex, Auto-Speed
+	Input flow control is unsupported, output flow control is off
+	Available but not configured via nameif
+	MAC address 0c89.087d.0000, MTU not set
+	IP address unassigned
+	0 packets input, 0 bytes, 0 no buffer
+	Received 0 broadcasts, 0 runts, 0 giants
+	0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+	0 pause input, 0 resume input
+	0 L2 decode drops
+	0 packets output, 0 bytes, 0 underruns
+	0 pause output, 0 resume output
+	0 output errors, 0 collisions, 1 interface resets
+	0 late collisions, 0 deferred
+	0 input reset drops, 0 output reset drops
+	input queue (blocks free curr/low): hardware (511/511)
+	output queue (blocks free curr/low): hardware (511/511)
+
+==============================
+COMMAND: show version
+==============================
+
+Cisco Adaptive Security Appliance Software Version 9.9(2) 
+Firepower Extensible Operating System Version 2.3(1.84)
+Device Manager Version 7.9(2)
+
+Compiled on Sun 25-Mar-18 17:32 PDT by builders
+System image file is "boot:/asa992-smp-k8.bin"
+Config file at boot was "startup-config"
+
+FW-ASA up 12 mins 41 secs
+
+Hardware:   ASAv, 2048 MB RAM, CPU Unknown Model 2304 MHz,
+Model Id:   ASAv10
+Internal ATA Compact Flash, 8192MB
+Slot 1: ATA Compact Flash, 8192MB
+BIOS Flash Firmware Hub @ 0x0, 0KB
+
+
+ 0: Ext: Management0/0       : address is 0c89.087d.0000, irq 11
+ 1: Ext: GigabitEthernet0/0  : address is 0c89.087d.0001, irq 11
+ 2: Ext: GigabitEthernet0/1  : address is 0c89.087d.0002, irq 10
+ 3: Ext: GigabitEthernet0/2  : address is 0c89.087d.0003, irq 10
+ 4: Ext: GigabitEthernet0/3  : address is 0c89.087d.0004, irq 11
+ 5: Ext: GigabitEthernet0/4  : address is 0c89.087d.0005, irq 11
+ 6: Ext: GigabitEthernet0/5  : address is 0c89.087d.0006, irq 10
+ 7: Ext: GigabitEthernet0/6  : address is 0c89.087d.0007, irq 10
+
+License mode: Smart Licensing
+ASAv Platform License State: Unlicensed
+No active entitlement: no feature tier and no throughput level configured
+*Memory resource allocation is more than the permitted limit.
+
+Licensed features for this platform:
+Maximum VLANs                     : 50             
+Inside Hosts                      : Unlimited      
+Failover                          : Active/Standby 
+Encryption-DES                    : Enabled        
+Encryption-3DES-AES               : Enabled        
+Security Contexts                 : 0              
+Carrier                           : Disabled       
+AnyConnect Premium Peers          : 2              
+AnyConnect Essentials             : Disabled       
+Other VPN Peers                   : 250            
+Total VPN Peers                   : 250            
+AnyConnect for Mobile             : Disabled       
+AnyConnect for Cisco VPN Phone    : Disabled       
+Advanced Endpoint Assessment      : Disabled       
+Shared License                    : Disabled       
+Total TLS Proxy Sessions          : 2              
+Botnet Traffic Filter             : Enabled        
+Cluster                           : Disabled       
+
+Serial Number: 9AQPEJ5QDAD
+
+Image type          : Release
+Key version         : A
+
+Configuration has not been modified since last system restart.
+
+==============================
+COMMAND: show route
+==============================
+
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, V - VPN
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, + - replicated route
+Gateway of last resort is 10.0.0.1 to network 0.0.0.0
+
+S*       0.0.0.0 0.0.0.0 [1/0] via 10.0.0.1, outside
+C        10.0.0.0 255.255.255.252 is directly connected, outside
+L        10.0.0.2 255.255.255.255 is directly connected, outside
+C        10.0.0.4 255.255.255.252 is directly connected, inside
+L        10.0.0.5 255.255.255.255 is directly connected, inside
+C        172.16.2.0 255.255.255.240 is directly connected, dmz
+L        172.16.2.1 255.255.255.255 is directly connected, dmz
+S        192.168.1.0 255.255.255.0 [1/0] via 10.0.0.6, inside
+S        192.168.254.0 255.255.255.0 [1/0] via 10.0.0.1, outside
+

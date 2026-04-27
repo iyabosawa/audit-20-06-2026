@@ -1,0 +1,291 @@
+{
+    "metadata": {
+        "source_file": "data/brut/FW-ASA_2026-04-25_10-28.txt",
+        "device": "FW-ASA"
+    },
+    "show version": {
+        "version": {
+            "asa_version": "9.9(2)",
+            "firepower_version": "2.3(1.84)",
+            "asdm_version": "7.9(2)",
+            "compiled_date": "Sun 25-Mar-18 17:32 PDT",
+            "compiled_by": "builders",
+            "system_image": "boot:/asa992-smp-k8.bin",
+            "boot_config_file": "startup-config",
+            "hostname": "FW-ASA",
+            "uptime": "12 mins 41 secs",
+            "platform": "ASAv",
+            "mem_size": "2048 MB",
+            "processor_type": "Unknown Model 2304 MHz",
+            "asa_model": "ASAv10",
+            "disks": {
+                "Internal": {
+                    "disk_size": "8192MB",
+                    "type_of_disk": "ATA Compact Flash"
+                },
+                "Slot 1": {
+                    "disk_size": "8192MB",
+                    "type_of_disk": "ATA Compact Flash"
+                }
+            },
+            "bios_flash": "Firmware Hub @ 0x0, 0KB",
+            "interfaces": {
+                "0": {
+                    "interface": "Management0/0",
+                    "mac_addr": "0c89.087d.0000",
+                    "intf_irq": 11
+                },
+                "1": {
+                    "interface": "GigabitEthernet0/0",
+                    "mac_addr": "0c89.087d.0001",
+                    "intf_irq": 11
+                },
+                "2": {
+                    "interface": "GigabitEthernet0/1",
+                    "mac_addr": "0c89.087d.0002",
+                    "intf_irq": 10
+                },
+                "3": {
+                    "interface": "GigabitEthernet0/2",
+                    "mac_addr": "0c89.087d.0003",
+                    "intf_irq": 10
+                },
+                "4": {
+                    "interface": "GigabitEthernet0/3",
+                    "mac_addr": "0c89.087d.0004",
+                    "intf_irq": 11
+                },
+                "5": {
+                    "interface": "GigabitEthernet0/4",
+                    "mac_addr": "0c89.087d.0005",
+                    "intf_irq": 11
+                },
+                "6": {
+                    "interface": "GigabitEthernet0/5",
+                    "mac_addr": "0c89.087d.0006",
+                    "intf_irq": 10
+                },
+                "7": {
+                    "interface": "GigabitEthernet0/6",
+                    "mac_addr": "0c89.087d.0007",
+                    "intf_irq": 10
+                }
+            },
+            "license_mode": "Smart Licensing",
+            "license_state": "Unlicensed",
+            "entitlement": "no feature tier and no throughput level configured",
+            "mem_allocation": "*Memory resource allocation is more than the permitted limit.",
+            "licensed_features": {
+                "max_vlans": {
+                    "status": "50"
+                },
+                "inside_hosts": {
+                    "status": "Unlimited"
+                },
+                "failover": {
+                    "status": "Active/Standby"
+                },
+                "crypto_des": {
+                    "status": "Enabled"
+                },
+                "crypto_3des_aes": {
+                    "status": "Enabled"
+                },
+                "security_contexts": {
+                    "status": "0"
+                },
+                "carrier": {
+                    "status": "Disabled"
+                },
+                "anyconnect_premium_peers": {
+                    "status": "2"
+                },
+                "anyconnect_essentials": {
+                    "status": "Disabled"
+                },
+                "other_vpn_peers": {
+                    "status": "250"
+                },
+                "total_vpn_peers": {
+                    "status": "250"
+                },
+                "anyconnect_for_mobile": {
+                    "status": "Disabled"
+                },
+                "anyconnect_for_cisco_vpn_phone": {
+                    "status": "Disabled"
+                },
+                "advanced_endpoint_assessment": {
+                    "status": "Disabled"
+                },
+                "shared_license": {
+                    "status": "Disabled"
+                },
+                "total_tls_proxy_sessions": {
+                    "status": "2"
+                },
+                "botnet_traffic_filter": {
+                    "status": "Enabled"
+                },
+                "cluster": {
+                    "status": "Disabled"
+                }
+            },
+            "serial_number": "9AQPEJ5QDAD",
+            "image_type": "Release",
+            "key_version": "A",
+            "last_modified_by": "",
+            "last_modified_date": "Configuration has not been modified since last system restart."
+        }
+    },
+    "show route": {
+        "vrf": {
+            "default": {
+                "address_family": {
+                    "ipv4": {
+                        "routes": {
+                            "0.0.0.0/0": {
+                                "candidate_default": true,
+                                "active": true,
+                                "route": "0.0.0.0/0",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.1",
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.0/30": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.0/30",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "outside": {
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.2/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.2/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "outside": {
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.4/30": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.4/30",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "inside": {
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.5/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "10.0.0.5/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "inside": {
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "172.16.2.0/28": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "172.16.2.0/28",
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "dmz": {
+                                            "outgoing_interface_name": "dmz"
+                                        }
+                                    }
+                                }
+                            },
+                            "172.16.2.1/32": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "172.16.2.1/32",
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface_name": {
+                                        "dmz": {
+                                            "outgoing_interface_name": "dmz"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.1.0/24": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "192.168.1.0/24",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.6",
+                                            "outgoing_interface_name": "inside"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.254.0/24": {
+                                "candidate_default": false,
+                                "active": true,
+                                "route": "192.168.254.0/24",
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "metric": 0,
+                                "route_preference": 1,
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.1",
+                                            "outgoing_interface_name": "outside"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,494 @@
+{
+    "metadata": {
+        "source_file": "data/brut/R1-INSIDE_2026-04-25_10-28.txt",
+        "device": "R1-INSIDE"
+    },
+    "show running-config": "Building configuration...\n\n  \nCurrent configuration : 3449 bytes\n!\n! Last configuration change at 10:27:31 UTC Sat Apr 25 2026 by cisco\n!\nversion 15.9\nservice timestamps debug datetime msec\nservice timestamps log datetime msec\nno service password-encryption\n!\nhostname R1-INSIDE\n!\nboot-start-marker\nboot-end-marker\n!\n!\nno logging console\n!\nno aaa new-model\n!\n!\n!\nmmi polling-interval 60\nno mmi auto-configure\nno mmi pvc\nmmi snmp-timeout 180\n!\n!\n!\n!\n!\nno ip icmp rate-limit unreachable\n!\n!\n!\n!\n!\n!\nno ip domain lookup\nip domain name lab.local\nip cef\nno ipv6 cef\n!\nmultilink bundle-name authenticated\n!\n!\n!\n!\nusername cisco privilege 15 secret 9 $9$Q3TZq7FagleLhP$8sEnZ16hFJpZlffTJ8613J8ggvImiwIUD48BklaQujs\n!\nredundancy\n!\nno cdp log mismatch duplex\n!\nip tcp synwait-time 5\n! \n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\ninterface GigabitEthernet0/0\n ip address 10.0.0.6 255.255.255.252\n duplex auto\n speed auto\n media-type rj45\n!\ninterface GigabitEthernet0/1\n ip address 192.168.1.1 255.255.255.0\n duplex auto\n speed auto\n media-type rj45\n!\ninterface GigabitEthernet0/2\n no ip address\n shutdown\n duplex auto\n speed auto\n media-type rj45\n!\ninterface GigabitEthernet0/3\n no ip address\n shutdown\n duplex auto\n speed auto\n media-type rj45\n!\nip forward-protocol nd\n!\n!\nno ip http server\nno ip http secure-server\nip route 0.0.0.0 0.0.0.0 10.0.0.5\nip route 172.16.2.0 255.255.255.240 10.0.0.5\nip ssh version 2\n!\nipv6 ioam timestamp\n!\n!\n!\ncontrol-plane\n!\nbanner exec ^C\n**************************************************************************\n* IOSv is strictly limited to use for evaluation, demonstration and IOS  *\n* education. IOSv is provided as-is and is not supported by Cisco's      *\n* Technical Advisory Center. Any use or disclosure, in whole or in part, *\n* of the IOSv Software or Documentation to any third party for any       *\n* purposes is expressly prohibited except as otherwise authorized by     *\n* Cisco in writing.                                                      *\n**************************************************************************^C\nbanner incoming ^C\n**************************************************************************\n* IOSv is strictly limited to use for evaluation, demonstration and IOS  *\n* education. IOSv is provided as-is and is not supported by Cisco's      *\n* Technical Advisory Center. Any use or disclosure, in whole or in part, *\n* of the IOSv Software or Documentation to any third party for any       *\n* purposes is expressly prohibited except as otherwise authorized by     *\n* Cisco in writing.                                                      *\n**************************************************************************^C\nbanner login ^C\n**************************************************************************\n* IOSv is strictly limited to use for evaluation, demonstration and IOS  *\n* education. IOSv is provided as-is and is not supported by Cisco's      *\n* Technical Advisory Center. Any use or disclosure, in whole or in part, *\n* of the IOSv Software or Documentation to any third party for any       *\n* purposes is expressly prohibited except as otherwise authorized by     *\n* Cisco in writing.                                                      *\n**************************************************************************^C\n!\nline con 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nline aux 0\n exec-timeout 0 0\n privilege level 15\n logging synchronous\nline vty 0 4\n exec-timeout 0 0\n login local\n transport input ssh\n!\nno scheduler allocate\n!\nend",
+    "show interfaces": {
+        "GigabitEthernet0/0": {
+            "port_channel": {
+                "port_channel_member": false
+            },
+            "is_deleted": false,
+            "enabled": true,
+            "line_protocol": "up",
+            "oper_status": "up",
+            "type": "iGbE",
+            "mac_address": "0ce6.86c0.0000",
+            "phys_address": "0ce6.86c0.0000",
+            "ipv4": {
+                "10.0.0.6/30": {
+                    "ip": "10.0.0.6",
+                    "prefix_length": "30"
+                }
+            },
+            "delay": 10,
+            "mtu": 1500,
+            "bandwidth": 1000000,
+            "reliability": "255/255",
+            "txload": "1/255",
+            "rxload": "1/255",
+            "encapsulations": {
+                "encapsulation": "arpa"
+            },
+            "keepalive": 10,
+            "duplex_mode": "auto",
+            "port_speed": "auto speed",
+            "link_type": "auto",
+            "auto_negotiate": true,
+            "media_type": "RJ45",
+            "flow_control": {
+                "receive": false,
+                "send": false
+            },
+            "arp_type": "arpa",
+            "arp_timeout": "04:00:00",
+            "last_input": "00:11:06",
+            "last_output": "00:00:00",
+            "output_hang": "never",
+            "queues": {
+                "input_queue_size": 0,
+                "input_queue_max": 75,
+                "input_queue_drops": 0,
+                "input_queue_flushes": 0,
+                "total_output_drop": 0,
+                "queue_strategy": "fifo",
+                "output_queue_size": 0,
+                "output_queue_max": 40
+            },
+            "counters": {
+                "rate": {
+                    "load_interval": 300,
+                    "in_rate": 0,
+                    "in_rate_pkts": 0,
+                    "out_rate": 0,
+                    "out_rate_pkts": 0
+                },
+                "last_clear": "never",
+                "in_pkts": 7,
+                "in_octets": 610,
+                "in_no_buffer": 0,
+                "in_multicast_pkts": 0,
+                "in_broadcast_pkts": 1,
+                "in_runts": 0,
+                "in_giants": 0,
+                "in_throttles": 0,
+                "in_errors": 0,
+                "in_crc_errors": 0,
+                "in_frame": 0,
+                "in_overrun": 0,
+                "in_ignored": 0,
+                "in_watchdog": 0,
+                "in_mac_pause_frames": 0,
+                "out_pkts": 98,
+                "out_octets": 12961,
+                "out_underruns": 0,
+                "out_errors": 0,
+                "out_interface_resets": 1,
+                "out_collision": 0,
+                "out_unknown_protocl_drops": 0,
+                "out_babble": 0,
+                "out_late_collision": 0,
+                "out_deferred": 0,
+                "out_lost_carrier": 0,
+                "out_no_carrier": 0,
+                "out_mac_pause_frames": 0,
+                "out_buffer_failure": 0,
+                "out_buffers_swapped": 0
+            }
+        },
+        "GigabitEthernet0/1": {
+            "port_channel": {
+                "port_channel_member": false
+            },
+            "is_deleted": false,
+            "enabled": true,
+            "line_protocol": "up",
+            "oper_status": "up",
+            "type": "iGbE",
+            "mac_address": "0ce6.86c0.0001",
+            "phys_address": "0ce6.86c0.0001",
+            "ipv4": {
+                "192.168.1.1/24": {
+                    "ip": "192.168.1.1",
+                    "prefix_length": "24"
+                }
+            },
+            "delay": 10,
+            "mtu": 1500,
+            "bandwidth": 1000000,
+            "reliability": "255/255",
+            "txload": "1/255",
+            "rxload": "1/255",
+            "encapsulations": {
+                "encapsulation": "arpa"
+            },
+            "keepalive": 10,
+            "duplex_mode": "auto",
+            "port_speed": "auto speed",
+            "link_type": "auto",
+            "auto_negotiate": true,
+            "media_type": "RJ45",
+            "flow_control": {
+                "receive": false,
+                "send": false
+            },
+            "arp_type": "arpa",
+            "arp_timeout": "04:00:00",
+            "last_input": "00:00:00",
+            "last_output": "00:00:00",
+            "output_hang": "never",
+            "queues": {
+                "input_queue_size": 0,
+                "input_queue_max": 75,
+                "input_queue_drops": 0,
+                "input_queue_flushes": 0,
+                "total_output_drop": 0,
+                "queue_strategy": "fifo",
+                "output_queue_size": 0,
+                "output_queue_max": 40
+            },
+            "counters": {
+                "rate": {
+                    "load_interval": 300,
+                    "in_rate": 2000,
+                    "in_rate_pkts": 2,
+                    "out_rate": 2000,
+                    "out_rate_pkts": 2
+                },
+                "last_clear": "never",
+                "in_pkts": 236,
+                "in_octets": 25346,
+                "in_no_buffer": 0,
+                "in_multicast_pkts": 0,
+                "in_broadcast_pkts": 61,
+                "in_runts": 0,
+                "in_giants": 0,
+                "in_throttles": 0,
+                "in_errors": 0,
+                "in_crc_errors": 0,
+                "in_frame": 0,
+                "in_overrun": 0,
+                "in_ignored": 0,
+                "in_watchdog": 0,
+                "in_mac_pause_frames": 0,
+                "out_pkts": 312,
+                "out_octets": 44688,
+                "out_underruns": 0,
+                "out_errors": 0,
+                "out_interface_resets": 1,
+                "out_collision": 0,
+                "out_unknown_protocl_drops": 0,
+                "out_babble": 0,
+                "out_late_collision": 0,
+                "out_deferred": 0,
+                "out_lost_carrier": 0,
+                "out_no_carrier": 0,
+                "out_mac_pause_frames": 0,
+                "out_buffer_failure": 0,
+                "out_buffers_swapped": 0
+            }
+        },
+        "GigabitEthernet0/2": {
+            "port_channel": {
+                "port_channel_member": false
+            },
+            "is_deleted": false,
+            "enabled": false,
+            "line_protocol": "down",
+            "oper_status": "down",
+            "type": "iGbE",
+            "mac_address": "0ce6.86c0.0002",
+            "phys_address": "0ce6.86c0.0002",
+            "delay": 10,
+            "mtu": 1500,
+            "bandwidth": 1000000,
+            "reliability": "255/255",
+            "txload": "1/255",
+            "rxload": "1/255",
+            "encapsulations": {
+                "encapsulation": "arpa"
+            },
+            "keepalive": 10,
+            "duplex_mode": "auto",
+            "port_speed": "auto speed",
+            "link_type": "auto",
+            "auto_negotiate": true,
+            "media_type": "RJ45",
+            "flow_control": {
+                "receive": false,
+                "send": false
+            },
+            "arp_type": "arpa",
+            "arp_timeout": "04:00:00",
+            "last_input": "never",
+            "last_output": "never",
+            "output_hang": "never",
+            "queues": {
+                "input_queue_size": 0,
+                "input_queue_max": 75,
+                "input_queue_drops": 0,
+                "input_queue_flushes": 0,
+                "total_output_drop": 0,
+                "queue_strategy": "fifo",
+                "output_queue_size": 0,
+                "output_queue_max": 40
+            },
+            "counters": {
+                "rate": {
+                    "load_interval": 300,
+                    "in_rate": 0,
+                    "in_rate_pkts": 0,
+                    "out_rate": 0,
+                    "out_rate_pkts": 0
+                },
+                "last_clear": "never",
+                "in_pkts": 0,
+                "in_octets": 0,
+                "in_no_buffer": 0,
+                "in_multicast_pkts": 0,
+                "in_broadcast_pkts": 0,
+                "in_runts": 0,
+                "in_giants": 0,
+                "in_throttles": 0,
+                "in_errors": 0,
+                "in_crc_errors": 0,
+                "in_frame": 0,
+                "in_overrun": 0,
+                "in_ignored": 0,
+                "in_watchdog": 0,
+                "in_mac_pause_frames": 0,
+                "out_pkts": 0,
+                "out_octets": 0,
+                "out_underruns": 0,
+                "out_errors": 0,
+                "out_interface_resets": 1,
+                "out_collision": 0,
+                "out_unknown_protocl_drops": 0,
+                "out_babble": 0,
+                "out_late_collision": 0,
+                "out_deferred": 0,
+                "out_lost_carrier": 0,
+                "out_no_carrier": 0,
+                "out_mac_pause_frames": 0,
+                "out_buffer_failure": 0,
+                "out_buffers_swapped": 0
+            }
+        },
+        "GigabitEthernet0/3": {
+            "port_channel": {
+                "port_channel_member": false
+            },
+            "is_deleted": false,
+            "enabled": false,
+            "line_protocol": "down",
+            "oper_status": "down",
+            "type": "iGbE",
+            "mac_address": "0ce6.86c0.0003",
+            "phys_address": "0ce6.86c0.0003",
+            "delay": 10,
+            "mtu": 1500,
+            "bandwidth": 1000000,
+            "reliability": "255/255",
+            "txload": "1/255",
+            "rxload": "1/255",
+            "encapsulations": {
+                "encapsulation": "arpa"
+            },
+            "keepalive": 10,
+            "duplex_mode": "auto",
+            "port_speed": "auto speed",
+            "link_type": "auto",
+            "auto_negotiate": true,
+            "media_type": "RJ45",
+            "flow_control": {
+                "receive": false,
+                "send": false
+            },
+            "arp_type": "arpa",
+            "arp_timeout": "04:00:00",
+            "last_input": "never",
+            "last_output": "never",
+            "output_hang": "never",
+            "queues": {
+                "input_queue_size": 0,
+                "input_queue_max": 75,
+                "input_queue_drops": 0,
+                "input_queue_flushes": 0,
+                "total_output_drop": 0,
+                "queue_strategy": "fifo",
+                "output_queue_size": 0,
+                "output_queue_max": 40
+            },
+            "counters": {
+                "rate": {
+                    "load_interval": 300,
+                    "in_rate": 0,
+                    "in_rate_pkts": 0,
+                    "out_rate": 0,
+                    "out_rate_pkts": 0
+                },
+                "last_clear": "never",
+                "in_pkts": 0,
+                "in_octets": 0,
+                "in_no_buffer": 0,
+                "in_multicast_pkts": 0,
+                "in_broadcast_pkts": 0,
+                "in_runts": 0,
+                "in_giants": 0,
+                "in_throttles": 0,
+                "in_errors": 0,
+                "in_crc_errors": 0,
+                "in_frame": 0,
+                "in_overrun": 0,
+                "in_ignored": 0,
+                "in_watchdog": 0,
+                "in_mac_pause_frames": 0,
+                "out_pkts": 0,
+                "out_octets": 0,
+                "out_underruns": 0,
+                "out_errors": 0,
+                "out_interface_resets": 1,
+                "out_collision": 0,
+                "out_unknown_protocl_drops": 0,
+                "out_babble": 0,
+                "out_late_collision": 0,
+                "out_deferred": 0,
+                "out_lost_carrier": 1,
+                "out_no_carrier": 0,
+                "out_mac_pause_frames": 0,
+                "out_buffer_failure": 0,
+                "out_buffers_swapped": 0
+            }
+        }
+    },
+    "show version": {
+        "version": {
+            "version_short": "15.9",
+            "platform": "IOSv",
+            "version": "15.9(3)M6",
+            "image_id": "VIOS-ADVENTERPRISEK9-M",
+            "label": "RELEASE SOFTWARE (fc1)",
+            "os": "IOS",
+            "image_type": "production image",
+            "copyright_years": "1986-2022",
+            "compiled_date": "Mon 08-Aug-22 15:22",
+            "compiled_by": "mcpre",
+            "rom": "Bootstrap program is IOSv",
+            "hostname": "R1-INSIDE",
+            "uptime": "11 minutes",
+            "returned_to_rom_by": "reload",
+            "system_image": "flash0:/vios-adventerprisek9-m",
+            "last_reload_reason": "Unknown reason",
+            "chassis": "IOSv",
+            "main_mem": "460009",
+            "processor_type": "revision 1.0",
+            "rtr_type": "IOSv",
+            "chassis_sn": "9GYNOXX2J4RWSPC2D4FQ0",
+            "number_of_intfs": {
+                "Gigabit Ethernet": "4"
+            },
+            "mem_size": {
+                "non-volatile configuration": "256"
+            },
+            "processor_board_flash": "0K",
+            "curr_config_register": "0x0"
+        }
+    },
+    "show ip route": {
+        "vrf": {
+            "default": {
+                "address_family": {
+                    "ipv4": {
+                        "routes": {
+                            "0.0.0.0/0": {
+                                "route": "0.0.0.0/0",
+                                "active": true,
+                                "metric": 0,
+                                "route_preference": 1,
+                                "source_protocol_codes": "S*",
+                                "source_protocol": "static",
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.5"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.4/30": {
+                                "route": "10.0.0.4/30",
+                                "active": true,
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface": {
+                                        "GigabitEthernet0/0": {
+                                            "outgoing_interface": "GigabitEthernet0/0"
+                                        }
+                                    }
+                                }
+                            },
+                            "10.0.0.6/32": {
+                                "route": "10.0.0.6/32",
+                                "active": true,
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface": {
+                                        "GigabitEthernet0/0": {
+                                            "outgoing_interface": "GigabitEthernet0/0"
+                                        }
+                                    }
+                                }
+                            },
+                            "172.16.2.0/28": {
+                                "route": "172.16.2.0/28",
+                                "active": true,
+                                "metric": 0,
+                                "route_preference": 1,
+                                "source_protocol_codes": "S",
+                                "source_protocol": "static",
+                                "next_hop": {
+                                    "next_hop_list": {
+                                        "1": {
+                                            "index": 1,
+                                            "next_hop": "10.0.0.5"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.1.0/24": {
+                                "route": "192.168.1.0/24",
+                                "active": true,
+                                "source_protocol_codes": "C",
+                                "source_protocol": "connected",
+                                "next_hop": {
+                                    "outgoing_interface": {
+                                        "GigabitEthernet0/1": {
+                                            "outgoing_interface": "GigabitEthernet0/1"
+                                        }
+                                    }
+                                }
+                            },
+                            "192.168.1.1/32": {
+                                "route": "192.168.1.1/32",
+                                "active": true,
+                                "source_protocol_codes": "L",
+                                "source_protocol": "local",
+                                "next_hop": {
+                                    "outgoing_interface": {
+                                        "GigabitEthernet0/1": {
+                                            "outgoing_interface": "GigabitEthernet0/1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
